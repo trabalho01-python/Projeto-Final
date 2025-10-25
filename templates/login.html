@@ -2,17 +2,33 @@
 
 {% block conteudo %}
 
-<div class="container">
-    <div class="row">
-        <div class="col-md-5 col-8">
-            <div>
-                <div>
-                    <h1>Super Select</h1>
+<div class="container-fluid">
+    <div class="text-center mb-3">
+        <img src="/static/logo.png" alt="Logo" class="logo-1 img-fluid">
+    </div>
+    <div class="row justify-content-center align-items-center vh-100">
+        <div class="col-md-4 d-flex flex-column align-items-center">
+            <form method="POST" action="/login" class="w-100 p-4 formulario-1">
+                <h4 class="text-center mb-4">Login</h4>
+                {% if error %}
+                <div class="alert alert-danger">{{ error }}</div>
+                {% endif %}
+                <div class="mb-3">
+                    <label for="email" class="form-label">E-mail</label>
+                    <input type="email" class="form-control" name="email" required>
                 </div>
-                <div>
-                    
+                <div class="mb-3">
+                    <label for="senha" class="form-label">Senha</label>
+                    <input type="password" class="form-control" name="senha" required>
                 </div>
-            </div>
+                <button type="submit" class="btn btn-primary w-100 button-1">Entrar</button>
+                <div class="text-center mt-3">
+                    <small class="text-1">Não tem cadastro? <a class="link-1" href="/cadastro">Clique aqui</a></small>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-4 d-none d-md-block">
+            <div class="imagem-login"></div>
         </div>
     </div>
 </div>

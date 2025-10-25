@@ -1,0 +1,52 @@
+.logo-1 {
+    /* max-width: 150px;
+    height: auto; */
+    width: 100%;
+    max-height: 200px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+}
+
+.imagem-login {
+    background-image: url('/static/imagem.jpg');
+    background-size: cover;
+    background-position: center;
+    height: 100%;
+    border-radius: 10px;
+}
+
+.formulario-1{
+    border: 3px solid mediumseagreen; 
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+.link-1{
+    color: mediumseagreen;
+    text-decoration: none;
+    font-size: 1rem;
+}
+.link-1:hover{
+    color:seagreen ;
+}
+
+.text-1{
+    font-size: 1rem;
+}
+
+.button-1{
+    background-color: mediumseagreen !important;
+    border-color: mediumseagreen !important;
+}
+.button-1:hover{
+    background-color: seagreen !important;
+    cursor: pointer !important;
+}
+
+.formulario-2 .row{
+    gap: 25px 0;
+}
+.formulario-2 button{
+    margin-top: 20px;
+}
