@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, flash
+from flask import Flask, render_template, request, redirect, flash, session
 import mysql.connector as my
 import bcrypt
 
@@ -13,7 +13,8 @@ def conectar_banco():
     return conexao
 
 app = Flask(__name__)
-app.secret_key = "chave_secreta"
+app.secret_key = "1234"
+
 
 @app.route("/")
 def index():
@@ -30,6 +31,7 @@ def login():
         cursor = conexao.cursor(dictionary=True)
         cursor.execute("SELECT * FROM usuarios WHERE email = %s", (email,))
         usuario = cursor.fetchone()
+        session['usuario'] = usuario
         cursor.close()
         conexao.close()
 
@@ -63,11 +65,6 @@ def cadastro():
         cpf = request.form.get('cpf')
         endereco = request.form.get('endereco')
 
-        # #Se for adm
-        # if tipo == 'administrador':
-        #     cpf = request.form['cpf']
-        #     endereco = request.form['endereco']
-
         #Conectar banco
         banco = conectar_banco()
         cursor = banco.cursor()
@@ -91,12 +88,23 @@ def cadastro():
 
 @app.route('/usuario')
 def usuario():
+    usuario = session.get('usuario')
+    if not usuario:
+        return redirect('/login')
+    if usuario['tipo'] != 'usuario':
+        return redirect('/login')
+    
     return render_template('usuario.html')
 
 @app.route('/administrador')
 def administrador():
-    return render_template('administrador.html')
+    usuario = session.get('usuario')
+    if not usuario:
+        return redirect('/login')
+    if usuario['tipo'] != 'administrador':
+        return redirect('/login')
 
+    return render_template('administrador.html')
 
 
 if __name__ == "__main__":
