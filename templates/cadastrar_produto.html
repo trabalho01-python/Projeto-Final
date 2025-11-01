@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block conteudo %}
+
+
+<div class="container mt-5">
+    <h2 class="mb-4 text-4">Cadastrar Produto</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <form method="POST" enctype="multipart/form-data" class="form-produto">
+        <div class="mb-3 campo">
+            <label for="nome" class="form-label">Nome</label>
+            <input type="text" class="form-control" id="nome" name="nome" required>
+        </div>
+
+        <div class="mb-3 campo">
+            <label for="descricao" class="form-label">Descrição</label>
+            <textarea class="form-control" id="descricao" name="descricao" rows="3" required></textarea>
+        </div>
+
+        <div class="mb-3 campo">
+            <label for="categoria" class="form-label">Categoria</label>
+            <select class="form-select" id="categoria" name="categoria" required>
+                <option value="">Selecione</option>
+                <option value="alimentos">Alimentos</option>
+                <option value="bebidas">Bebidas</option>
+                <option value="higiene">Higiene</option>
+                <option value="limpeza">Limpeza</option>
+                <option value="hortifruti">Hortifruti</option>
+                <option value="padaria">Padaria</option>
+            </select>
+        </div>
+
+        <div class="mb-3 campo">
+            <label for="preco" class="form-label">Preço</label>
+            <div class="input-preco">
+                <span class="prefixo">R$</span>
+                <input type="text" id="preco" name="preco" required>
+            </div>
+            <!-- <input type="text" step="0.01" class="form-control" id="preco" name="preco" required> -->
+        </div>
+
+        <div class="mb-3 campo">
+            <label for="data_validade" class="form-label">Data de Validade</label>
+            <input type="date" class="form-control" id="data_validade" name="data_validade" required>
+        </div>
+
+        <div class="campo">
+            <label class="checkbox-label">
+                <input type="checkbox" id="sem_validade" name="sem_validade">
+                Produto sem validade
+            </label>
+        </div>
+
+        <div class="mb-3 campo linha-checkbox">
+            <label for="estoque" class="form-label">Estoque</label>
+            <input type="number" class="form-control" id="estoque" name="estoque" required>
+        </div>
+
+        <div class="mb-3 campo">
+            <label for="imagem" class="form-label">Foto do Produto</label>
+            <input type="file" class="form-control" id="imagem" name="imagem" accept="image/*" required>
+        </div>
+
+        <div class="botao">
+            <button type="submit" class="btn btn-primary">Cadastrar</button>
+        </div>
+
+    </form>
+</div>
+
+<script>
+    document.getElementById('preco').addEventListener('input', function (e) {
+        let input = e.target;
+        let value = input.value.replace(/\D/g, ''); // remove tudo que não for número
+
+        if (value.length === 0) {
+            input.value = '';
+            return;
+        }
+
+        value = (parseInt(value, 10) / 100).toFixed(2); // divide por 100 e fixa 2 casas
+        value = value.replace('.', ','); // troca ponto por vírgula
+        value = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.'); // adiciona pontos nos milhares
+
+        input.value = value;
+    });
+</script>
+
+<script>
+    document.getElementById('sem_validade').addEventListener('change', function () {
+        const validadeInput = document.getElementById('data_validade');
+        if (this.checked) {
+            validadeInput.disabled = true;
+            validadeInput.value = '';
+        } else {
+            validadeInput.disabled = false;
+        }
+    });
+</script>
+
+{% endblock %}

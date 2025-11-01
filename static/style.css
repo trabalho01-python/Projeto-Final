@@ -8,6 +8,27 @@
     margin: 0 auto;
 }
 
+.logo-2 {
+    width: 140px;           /* Tamanho base da imagem */
+    height: auto;
+    object-fit: contain;
+    transform: scale(1.5);  /* Amplia visualmente a imagem */
+    transform-origin: left center; /* Mantém alinhamento à esquerda */
+}
+
+.navbar-1 {
+    padding-top: 0;
+    padding-bottom: 0;
+    min-height: 0;
+}
+
+.navbar-2 {
+    background-color: royalblue !important;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    overflow: hidden;
+}
+
 .imagem-login {
     background-image: url('/static/imagem.jpg');
     background-size: cover;
@@ -49,4 +70,121 @@
 }
 .formulario-2 button{
     margin-top: 20px;
+}
+
+.color-border1{
+    border: 2px solid darkgray !important;
+}
+
+.button-2{
+    background-color: royalblue !important;
+    border-color: royalblue !important;
+}
+.button-2:hover{
+    background-color: mediumblue !important;
+    cursor: pointer !important;
+}
+.title-color2{
+    color: (54,54,54);
+    font-size: 18px;
+    font-weight: bold;
+}
+.link-2{
+    color: royalblue;
+    text-decoration: none;
+    font-size: 1rem;
+}
+.link-2:hover{
+    color: mediumblue;
+}
+
+.icone-1 {
+    color: darkorange;
+    margin-right: 5px;
+}
+
+.text-2 {
+    color: darkorange;
+    font-style: italic;
+    font-weight: bold;
+}
+
+.text-3 {
+    color: mediumseagreen !important;
+    font-weight: bold !important;
+}
+
+.form-produto {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    font-family: Arial, sans-serif;
+}
+.form-produto .campo{
+    margin-bottom: 40px;
+    display: flex;
+    flex-direction: column;
+}
+.form-produto label {
+    font-weight: bold;
+    margin-bottom: 6px;
+    color: black;
+}
+.form-produto input,
+.form-produto textarea,
+.form-produto select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 15px;
+}
+.form-produto input[type="file"] {
+    padding: 6px;
+}
+.form-produto .botao {
+    text-align: center;
+}
+.form-produto button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+.form-produto button:hover {
+    background-color: #0056b3;
+}
+
+.text-4 {
+    color: mediumseagreen;
+    text-align: center;
+}
+
+.input-preco {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.input-preco .prefixo {
+    font-weight: bold;
+    color: #333;
+}
+
+.input-preco input {
+    flex: 1;
+}
+
+.linha-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: bold;
+    color: black;
 }

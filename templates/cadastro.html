@@ -8,32 +8,50 @@
         <img src="{{url_for('static', filename='logo.png')}}" alt="Logo" class="img-fluid logo-1">
     </div>
     <!-- imagem -->
-     <img src="{{url_for('static', filename='imagem2.jpg')}}" alt="Imagem" class="top-imagem mb-4">
-     <!-- formulario -->
-      <div class="form-container">
+    <img src="{{url_for('static', filename='imagem2.jpg')}}" alt="Imagem" class="top-imagem mb-4">
+    <!-- formulario -->
+    <div class="form-container">
         <div class="form-side">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show mt-2" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
             <form method="post" action="{{url_for('cadastro')}}" class="formulario-2">
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label for="nome" class="form-label">Nome:</label>
-                        <input type="text" class="form-control" id="nome" name="nome" required>
+                        <label for="nome" class="form-label title-color2">Nome:</label>
+                        <input type="text" class="form-control color-border1" id="nome" name="nome" required>
                     </div>
                     <div class="col-md-6">
-                        <label for="email" class="form-label">Email:</label>
-                        <input type="email" class="form-control" id="email" name="email" required>
+                        <label for="email" class="form-label title-color2">Email:</label>
+                        <input type="email" class="form-control color-border1" id="email" name="email" required>
                     </div>
                     <div class="col-md-6">
-                        <label for="senha" class="form-label">Senha:</label>
+                        <label for="senha" class="form-label title-color2">Senha:</label>
                         <div class="position-relative">
-                            <input type="password" class="form-control pe-5" id="senha" name="senha" required>
-                            <i id="iconeOlho" class="fa fa-eye position-absolute top-50 end-0 translate-middle-y me-3"></i> 
+                            <input type="password" class="form-control pe-5 color-border1" id="senha" name="senha"
+                                required>
+                            <i id="iconeOlho"
+                                class="fa fa-eye position-absolute top-50 end-0 translate-middle-y me-3"></i>
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label icone-1" for="">
-                            <i class="bi bi-exclamation-triangle-fill">Importante!</i>
+                        <label for="cpf" class="form-label title-color2">CPF:</label>
+                        <input type="text" class="form-control color-border1" id="cpf" name="cpf">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="">
+                            <i class="bi bi-exclamation-triangle-fill icone-1"></i>
+                            <span class="text-2">Importante!</span>
                         </label>
-                        <select class="form-select" name="tipo" id="tipo" onchange="mostrarCamposAdmin()" required>
+                        <select class="form-select color-border1" name="tipo" id="tipo" onchange="mostrarCamposAdmin()"
+                            required>
                             <option value="">Selecione...</option>
                             <option value="cliente">Cliente</option>
                             <option value="administrador">Administrador</option>
@@ -42,29 +60,26 @@
                 </div>
                 <div id="camposAdmin" style="display: none;">
                     <div class="row mb-3">
+
                         <div class="col-md-6">
-                            <label for="cpf" class="form-label">CPF:</label>
-                            <input type="text" class="form-control" id="cpf" name="cpf">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="endereco" class="form-label">Endereço:</label>
-                            <input type="text" class="form-control" id="endereco" name="endereco">
+                            <label for="endereco" class="form-label title-color2">Endereço:</label>
+                            <input type="text" class="form-control color-border1" id="endereco" name="endereco">
                         </div>
                     </div>
                 </div>
                 <div class="text-center mt-4">
-                    <button type="submit" class="btn btn-primary px-4">Cadastrar</button>
+                    <button type="submit" class="btn btn-primary px-4 button-2">Cadastrar</button>
                 </div>
                 <div class="text-center mt-3">
-                    <small >Já possui cadastro?<a href="/login"> Clique aqui </a></small>
+                    <small>Já possui cadastro?<a class="link-2" href="/login"> Clique aqui </a></small>
                 </div>
             </form>
         </div>
-      </div>
+    </div>
 </div>
 
 <!-- ocultar senha -->
- <script>
+<script>
     function mostrarSenha() {
         const campo = document.getElementById("senha");
         const icone = document.getElementById("iconeOlho");
@@ -74,15 +89,15 @@
             icone.classList.remove("fa-eye");
             icone.classList.add("fa-eye-slash");
         }
-        else{
+        else {
             campo.type = "password";
             icone.classList.remove("fa-eye-slash");
             icone.classList.add("fa-eye")
         }
     }
- </script>
+</script>
 
- <!-- Campo CPF e endereço aparecem apenas se o tipo for admin  -->
+<!-- Campo CPF e endereço aparecem apenas se o tipo for admin  -->
 <script>
     function mostrarCamposAdmin() {
         const tipo = document.getElementById("tipo").value;
@@ -91,7 +106,7 @@
         if (tipo === "administrador") {
             campos.style.display = "block";
         }
-        else{
+        else {
             campos.style.display = "none";
         }
     }

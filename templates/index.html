@@ -1,5 +1,27 @@
 {% extends 'base.html' %}
 
 {% block conteudo %}
-<h1>olá mundo</h1>
+
+<nav class="navbar navbar-light bg-light py-1 border-bottom navbar-1">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+        <a class="navbar-brand" href="#">
+            <img src="/static/logo.png" alt="Logo" class="d-inline-block align-text-top logo-2">
+        </a>
+        <div class="d-flex align-items-center">
+            <a class="nav-link me-5 text-3" href="{{ url_for('login') }}">Login</a>
+            <a class="nav-link text-3" href="{{ url_for('administrador') }}">Área do Administrador</a>
+        </div>
+    </div>
+</nav>
+
+<!-- Navbar Inferior -->
+<nav class="navbar navbar-expand-lg navbar-dark py-2 navbar-2">
+    
+</nav>
+
+<div class="container mt-4">
+    <h1>Bem-vindo ao Projeto!</h1>
+</div>
+
+
 {% endblock %}

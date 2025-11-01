@@ -1,11 +1,12 @@
 from flask import Flask, render_template, request, redirect, flash, session
 import mysql.connector as my
 import bcrypt
+import os
 
 def conectar_banco():
     config = { 
     'user': 'root', 
-    'password': '1234', 
+    'password': 'x7z1wp00', 
     'host': 'localhost', 
     'database': 'SuperSelect_sa', 
     }
@@ -15,6 +16,8 @@ def conectar_banco():
 app = Flask(__name__)
 app.secret_key = "1234"
 
+UPLOAD_FOLDER = 'static/uploads'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route("/")
 def index():
@@ -57,31 +60,32 @@ def cadastro():
         email = request.form['email']
         senha = request.form['senha']
         tipo = request.form['tipo']
+        cpf = request.form['cpf']
 
         #Criptografar a senha
         senha_bytes = senha.encode('utf-8')
         senha_hash = bcrypt.hashpw(senha_bytes, bcrypt.gensalt()).decode('utf-8')
 
-        cpf = request.form.get('cpf')
+        # cpf = request.form.get('cpf')
         endereco = request.form.get('endereco')
 
         #Conectar banco
-        banco = conectar_banco()
-        cursor = banco.cursor()
+        conexao = conectar_banco()
+        cursor = conexao.cursor()
 
         try:
             cursor.execute("""  INSERT INTO usuarios (nome, email, senha, tipo, cpf, endereco) VALUES (%s,%s,%s,%s,%s,%s) """, (nome, email, senha_hash, tipo, cpf, endereco))
-            banco.commit()
-            flash("Cadastro realizado com sucesso!", "sucess")
-            return redirect('/cadastro')
+            conexao.commit()
+            flash("Cadastro realizado com sucesso!", "success")
+            return redirect('/login')
         
         except Exception as erro:
-            banco.rollback()
+            conexao.rollback()
             flash(f'Ocorreu um erro ao cadastrar: {str(erro)}', 'danger')
 
         finally:
             cursor.close()
-            banco.close()
+            conexao.close()
 
     return render_template('/cadastro.html', tipo=tipo)
 
@@ -105,6 +109,97 @@ def administrador():
         return redirect('/login')
 
     return render_template('administrador.html')
+
+@app.route('/cadastrar_produto', methods=['GET', 'POST'])
+def cadastrar_produto():
+    if request.method == 'POST':
+        nome = request.form['nome']
+        descricao = request.form['descricao']
+        categoria = request.form['categoria']
+        preco = request.form['preco'].replace('.', '').replace(',', '.')
+        data_validade = request.form['data_validade']
+        estoque = request.form['estoque']
+        sem_validade = 'sem_validade' in request.form
+        data_validade = None if sem_validade else request.form['data_validade']
+        imagem = request.files['imagem']
+
+        url = None
+        if imagem and imagem.filename != '':
+            filename = imagem.filename.replace(" ", "_")
+            caminho = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            imagem.save(caminho)
+            url = f"uploads/{filename}"
+
+
+        conexao = conectar_banco()
+        cursor = conexao.cursor()
+
+        sql = "INSERT INTO produtos (nome, descricao, categoria, preco, data_validade, estoque, sem_validade, url) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+        valores = (nome, descricao, categoria, preco, data_validade, estoque, sem_validade, url)
+
+        try:
+            cursor.execute(sql, valores)
+            conexao.commit()
+            flash('Produto cadastrado com sucesso!', 'success')
+        except Exception as e:
+            conexao.rollback()
+            flash(f'Erro ao cadastrar produto: {e}', 'danger')
+
+        return redirect('/cadastrar_produto')
+
+    return render_template('cadastrar_produto.html')
+
+
+@app.route('/consultar_produto', methods=['GET', 'POST'])
+def consultar_produto():
+    conexao = conectar_banco()
+    cursor = conexao.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT * FROM produtos
+        ORDER BY id DESC
+    """)
+    produtos = cursor.fetchall()
+    cursor.close()
+    conexao.close()
+    return render_template('consultar_produto.html', produtos=produtos)
+
+
+@app.route('/excluir-produto/<int:id>')
+def excluir_produto(id):
+    conexao = conectar_banco()
+    cursor = conexao.cursor()
+
+    cursor.execute("DELETE FROM produtos WHERE id = %s", (id,))
+    conexao.commit()
+    flash('Produto excluído com sucesso!', 'success')
+    return redirect('consultar_produto')
+
+@app.route('/editar-produto/<int:id>', methods=['GET', 'POST'])
+def editar_produto(id):
+    conexao = conectar_banco()
+    cursor = conexao.cursor(dictionary=True)
+
+    if request.method == 'POST':
+        nome = request.form['nome']
+        descricao = request.form['descricao']
+        categoria = request.form['categoria']
+        preco = request.form['preco'].replace('.', '').replace(',', '.')
+        estoque = request.form['estoque']
+        sem_validade = 'sem_validade' in request.form
+        data_validade = None if sem_validade else request.form['data_validade']
+
+        cursor.execute("""
+            UPDATE produtos SET nome=%s, descricao=%s, categoria=%s, preco=%s, data_validade=%s, estoque=%s
+            WHERE id=%s
+        """, (nome, descricao, categoria, preco, data_validade, estoque, id))
+        conexao.commit()
+        flash('Produto atualizado com sucesso!', 'success')
+        return redirect('consultar_produto')
+
+    cursor.execute("SELECT * FROM produtos WHERE id = %s", (id,))
+    produto = cursor.fetchone()
+    return render_template('editar_produto.html', produto=produto)
 
 
 if __name__ == "__main__":
