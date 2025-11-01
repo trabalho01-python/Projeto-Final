@@ -1,12 +1,11 @@
 from flask import Flask, render_template, request, redirect, flash, session
 import mysql.connector as my
 import bcrypt
-import os
 
 def conectar_banco():
     config = { 
     'user': 'root', 
-    'password': 'x7z1wp00', 
+    'password': '1234', 
     'host': 'localhost', 
     'database': 'SuperSelect_sa', 
     }
@@ -15,9 +14,6 @@ def conectar_banco():
 
 app = Flask(__name__)
 app.secret_key = "1234"
-
-UPLOAD_FOLDER = 'static/uploads'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route("/")
 def index():
@@ -66,7 +62,6 @@ def cadastro():
         senha_bytes = senha.encode('utf-8')
         senha_hash = bcrypt.hashpw(senha_bytes, bcrypt.gensalt()).decode('utf-8')
 
-        # cpf = request.form.get('cpf')
         endereco = request.form.get('endereco')
 
         #Conectar banco
@@ -102,11 +97,11 @@ def usuario():
 
 @app.route('/administrador')
 def administrador():
-    usuario = session.get('usuario')
-    if not usuario:
-        return redirect('/login')
-    if usuario['tipo'] != 'administrador':
-        return redirect('/login')
+    # usuario = session.get('usuario')
+    # if not usuario:
+    #     return redirect('/login')
+    # if usuario['tipo'] != 'administrador':
+    #     return redirect('/login')
 
     return render_template('administrador.html')
 
@@ -123,19 +118,11 @@ def cadastrar_produto():
         data_validade = None if sem_validade else request.form['data_validade']
         imagem = request.files['imagem']
 
-        url = None
-        if imagem and imagem.filename != '':
-            filename = imagem.filename.replace(" ", "_")
-            caminho = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            imagem.save(caminho)
-            url = f"uploads/{filename}"
-
-
         conexao = conectar_banco()
         cursor = conexao.cursor()
 
-        sql = "INSERT INTO produtos (nome, descricao, categoria, preco, data_validade, estoque, sem_validade, url) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-        valores = (nome, descricao, categoria, preco, data_validade, estoque, sem_validade, url)
+        sql = "INSERT INTO produtos (nome, descricao, categoria, preco, data_validade, estoque, sem_validade, imagem) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+        valores = (nome, descricao, categoria, preco, data_validade, estoque, sem_validade, imagem)
 
         try:
             cursor.execute(sql, valores)

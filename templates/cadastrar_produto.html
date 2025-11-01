@@ -2,7 +2,6 @@
 
 {% block conteudo %}
 
-
 <div class="container mt-5">
     <h2 class="mb-4 text-4">Cadastrar Produto</h2>
 
@@ -17,65 +16,72 @@
     {% endif %}
     {% endwith %}
 
-    <form method="POST" enctype="multipart/form-data" class="form-produto">
-        <div class="mb-3 campo">
-            <label for="nome" class="form-label">Nome</label>
-            <input type="text" class="form-control" id="nome" name="nome" required>
-        </div>
-
-        <div class="mb-3 campo">
-            <label for="descricao" class="form-label">Descrição</label>
-            <textarea class="form-control" id="descricao" name="descricao" rows="3" required></textarea>
-        </div>
-
-        <div class="mb-3 campo">
-            <label for="categoria" class="form-label">Categoria</label>
-            <select class="form-select" id="categoria" name="categoria" required>
-                <option value="">Selecione</option>
-                <option value="alimentos">Alimentos</option>
-                <option value="bebidas">Bebidas</option>
-                <option value="higiene">Higiene</option>
-                <option value="limpeza">Limpeza</option>
-                <option value="hortifruti">Hortifruti</option>
-                <option value="padaria">Padaria</option>
-            </select>
-        </div>
-
-        <div class="mb-3 campo">
-            <label for="preco" class="form-label">Preço</label>
-            <div class="input-preco">
-                <span class="prefixo">R$</span>
-                <input type="text" id="preco" name="preco" required>
+    <form method="post" action="{{url_for('cadastrar_produto')}}" class="formulario-2">
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="nome" class="form-label title-color2">Nome:</label>
+                <input type="text" class="form-control color-border1" id="nome" name="nome" required>
             </div>
-            <!-- <input type="text" step="0.01" class="form-control" id="preco" name="preco" required> -->
-        </div>
 
-        <div class="mb-3 campo">
-            <label for="data_validade" class="form-label">Data de Validade</label>
-            <input type="date" class="form-control" id="data_validade" name="data_validade" required>
-        </div>
+            <div class="col-md-6">
+                <label for="descricao" class="form-label title-color2">Descricao:</label>
+                <input type="text" class="form-control color-border1" id="descricao" name="descricao" required>
+            </div>
 
-        <div class="campo">
-            <label class="checkbox-label">
-                <input type="checkbox" id="sem_validade" name="sem_validade">
-                Produto sem validade
-            </label>
-        </div>
+            <div class="col-md-6">
+                <label for="categoria" class="form-label title-color2">Categoria</label>
+                <select class="form-select color-border1" id="categoria" name="categoria" required>
+                    <option value="">Selecione</option>
+                    <option value="alimentos">Alimentos</option>
+                    <option value="bebidas">Bebidas</option>
+                    <option value="higiene">Higiene</option>
+                    <option value="limpeza">Limpeza</option>
+                    <option value="hortifruti">Hortifruti</option>
+                    <option value="padaria">Padaria</option>
+                </select>
+            </div>
 
-        <div class="mb-3 campo linha-checkbox">
-            <label for="estoque" class="form-label">Estoque</label>
-            <input type="number" class="form-control" id="estoque" name="estoque" required>
-        </div>
+            <div class="col-md-6">
+                <div class="mb-3 campo">
+                    <label for="preco" class="form-label title-color2">Preço</label>
+                    <div class="input-preco">
+                        <span class="prefixo">R$</span>
+                        <input class="color-border1" type="text" id="preco" name="preco" required>
+                    </div>
+                </div>
+            </div>
 
-        <div class="mb-3 campo">
-            <label for="imagem" class="form-label">Foto do Produto</label>
-            <input type="file" class="form-control" id="imagem" name="imagem" accept="image/*" required>
-        </div>
+            <div class="col-md-6">
+                <div class="campo">
+                    <label for="validade" class="title-color2">Data de Validade</label>
+                    <input class="color-border1" type="date" id="validade">
+                    <div class="checkbox">
+                        <input type="checkbox" id="sem_validade">
+                        <label for="sem_validade">Sem validade</label>
+                    </div>
+                </div>
+            </div>
 
-        <div class="botao">
-            <button type="submit" class="btn btn-primary">Cadastrar</button>
-        </div>
+            <div class="col-md-6">
+                <div class="mb-3 campo linha-checkbox">
+                    <label for="estoque" class="form-label title-color2">Estoque</label>
+                    <input type="number" class="form-control" id="estoque" name="estoque" required>
+                </div>
+            </div>
 
+            <div class="col-md-6">
+                <div class="mb-3 campo">
+                    <label for="imagem" class="form-label title-color2">Foto do Produto</label>
+                    <input type="text" class="form-control" id="imagem" name="imagem" accept="image/*" required>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="botao">
+                    <button type="submit" class="btn btn-primary">Cadastrar</button>
+                </div>
+            </div>
+        </div>
     </form>
 </div>
 
