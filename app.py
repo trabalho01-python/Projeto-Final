@@ -5,19 +5,22 @@ import bcrypt
 def conectar_banco():
     config = { 
     'user': 'root', 
-    'password': 'x7z1wp00', 
+    'password': '1234', 
     'host': 'localhost', 
     'database': 'SuperSelect_sa', 
     }
     conexao = my.connect(**config)
     return conexao
 
+
 app = Flask(__name__)
 app.secret_key = "1234"
+
 
 @app.route("/")
 def index():
     return render_template("index.html")
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -80,7 +83,6 @@ def cadastro():
         try:
             cursor.execute("""  INSERT INTO usuarios (nome, email, senha, tipo, cpf, endereco) VALUES (%s,%s,%s,%s,%s,%s) """, (nome, email, senha_hash, tipo, cpf, endereco))
             conexao.commit()
-            flash("Cadastro realizado com sucesso!", "success")
             return redirect('/login')
         
         except Exception as erro:
@@ -114,6 +116,7 @@ def cliente():
 
     return render_template('cliente.html', email=usuario_email, produtos=produtos)
 
+
 @app.route('/administrador')
 def administrador():
     usuario_id = session.get('usuario_id')
@@ -124,6 +127,7 @@ def administrador():
         return redirect('/login')
 
     return render_template('administrador.html', email=usuario_email)
+
 
 @app.route('/cadastrar_produto', methods=['GET', 'POST'])
 def cadastrar_produto():
@@ -177,7 +181,6 @@ def excluir_produto(id):
     conexao.commit()
     cursor.close()
     conexao.close()
-    flash("Produto excluído com sucesso!", "success")
     return redirect('/consultar_produto')
 
 
@@ -205,7 +208,6 @@ def editar_produto(id):
             valores = (nome, descricao, categoria, preco, data_validade, estoque, sem_validade, imagem, id)
             cursor.execute(sql, valores)
             conexao.commit()
-            flash('Produto atualizado com sucesso!', 'success')
 
             # <-- Aqui vem o redirecionamento
             return redirect('/consultar_produto')

@@ -114,40 +114,6 @@
     font-weight: bold !important;
 }
 
-/* .form-produto {
-    width: 90%;
-    max-width: 900px;
-    margin: 30px auto;
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
-} */
-
-/* .linha {
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
-} */
-
-
-/* .campo{
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-.campo label{
-    margin-bottom: 5px;
-    font-weight: 600;
-} */
-
-/* .checkbox {
-    margin-top: 8px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-} */
-
 .text-4 {
     color: mediumseagreen;
     text-align: center;
@@ -174,4 +140,10 @@
     gap: 8px;
     font-weight: bold;
     color: black;
+}
+
+.button-3 {
+    justify-content: center !important;
+    margin-top: 20px !important;
+    gap: 10px !important;
 }
