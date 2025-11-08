@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+
+{% block conteudo %}
+
+<div class="container">
+    <h2 class="mb-4">Editar Produto</h2>
+
+    <form id="editarProdutoForm" method="post" action="{{ url_for('editar_produto', id=produto['id']) }}"
+        class="needs-validation" novalidate>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="nome" class="form-label">Nome:</label>
+                <input type="text" class="form-control" id="nome" name="nome" value="{{ produto['nome'] }}" required>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="categoria" class="form-label">Categoria:</label>
+                <input type="text" class="form-control" id="categoria" name="categoria"
+                    value="{{ produto['categoria'] }}" required>
+            </div>
+
+            <div class="col-md-12 mb-3">
+                <label for="descricao" class="form-label">Descrição:</label>
+                <textarea class="form-control" id="descricao" name="descricao" rows="3"
+                    required>{{ produto['descricao'] }}</textarea>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label for="preco" class="form-label">Preço:</label>
+                <input type="text" class="form-control" id="preco" name="preco" value="{{ produto['preco'] }}" required>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label for="validade" class="form-label">Data de Validade:</label>
+                <input type="date" class="form-control" id="validade" name="validade"
+                    value="{{ produto['data_validade'] if not produto['sem_validade'] }}">
+                <div class="form-check mt-2">
+                    <input type="checkbox" class="form-check-input" id="sem_validade" name="sem_validade" {% if
+                        produto['sem_validade'] %}checked{% endif %}>
+                    <label for="sem_validade" class="form-check-label">Sem validade</label>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label for="estoque" class="form-label">Estoque:</label>
+                <input type="number" class="form-control" id="estoque" name="estoque" value="produto['estoque']"
+                    required>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="imagem" class="form-label">Foto do Produto (URL):</label>
+                <input type="text" class="form-control" id="imagem" name="imagem" value="{{ produto['imagem'] }}">
+            </div>
+        </div>
+
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#revisaoModal">
+            Salvar Alterações
+        </button>
+        <a href="{{ url_for('consultar_produto') }}" class="btn btn-secondary">Cancelar</a>
+
+    </form>
+
+    <!-- Modal de revisão -->
+    <div class="modal fade" id="revisaoModal" tabindex="-1" aria-labelledby="revisaoModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="revisaoModalLabel">Revisar Alterações</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Nome:</strong> <span id="revNome"></span></p>
+                    <p><strong>Categoria:</strong> <span id="revCategoria"></span></p>
+                    <p><strong>Descrição:</strong> <span id="revDescricao"></span></p>
+                    <p><strong>Preço:</strong> R$ <span id="revPreco"></span></p>
+                    <p><strong>Data de Validade:</strong> <span id="revValidade"></span></p>
+                    <p><strong>Estoque:</strong> <span id="revEstoque"></span></p>
+                    <p><strong>Imagem:</strong> <span id="revFotoProduto"></span></p>
+                </div>
+                <div class="modal-footer">
+                    <!-- Cancelar apenas fecha a modal -->
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <!-- Confirmar envia o formulário -->
+                    <button type="button" class="btn btn-success" id="confirmarSalvar">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    //Bloqueia o envio do formulário até que tudo esteja correto(verifica se todos os campos obrigatórios estão preenchidos.)
+    (function () {
+        'use strict'
+        const forms = document.querySelectorAll('.needs-validation')
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+                form.classList.add('was-validated')
+            }, false)
+        })
+    })()
+</script>
+
+<script>
+    document.getElementById('preco').addEventListener('input', function (e) {
+        let input = e.target;
+        let value = input.value.replace(/\D/g, ''); // remove tudo que não for número
+
+        if (value.length === 0) {
+            input.value = '';
+            return;
+        }
+
+        value = (parseInt(value, 10) / 100).toFixed(2); // divide por 100 e fixa 2 casas
+        value = value.replace('.', ','); // troca ponto por vírgula
+        value = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.'); // adiciona pontos nos milhares
+
+        input.value = value;
+    });
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const modal = document.getElementById('revisaoModal');
+    const confirmarBtn = document.getElementById('confirmarSalvar');
+    
+    // Quando a modal abre, preenche os campos
+    modal.addEventListener('show.bs.modal', function () {
+        document.getElementById('revNome').textContent = document.getElementById('nome').value;
+        document.getElementById('revCategoria').textContent = document.getElementById('categoria').value;
+        document.getElementById('revDescricao').textContent = document.getElementById('descricao').value;
+        document.getElementById('revPreco').textContent = document.getElementById('preco').value;
+        document.getElementById('revValidade').textContent = document.getElementById('validade').value || 'Sem validade';
+        document.getElementById('revEstoque').textContent = document.getElementById('estoque').value;
+        document.getElementById('revImagem').textContent = document.getElementById('imagem').value;
+    });
+
+    // Botão confirmar envia o formulário
+    confirmarBtn.addEventListener('click', function() {
+        document.getElementById('editarProdutoForm').submit();
+    });
+});
+</script>
+
+
+{% endblock %}

@@ -114,28 +114,23 @@
     font-weight: bold !important;
 }
 
-.form-produto {
+/* .form-produto {
     width: 90%;
     max-width: 900px;
     margin: 30px auto;
     display: flex;
     flex-direction: column;
     gap: 25px;
-}
+} */
 
-.linha {
+/* .linha {
     display: flex;
     flex-direction: column;
     gap: 25px;
-}
+} */
 
-.row-1 {
-    display: flex;
-    justify-content: space-between;
-    gap: 25px;
-}
 
-.campo{
+/* .campo{
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -144,14 +139,14 @@
 .campo label{
     margin-bottom: 5px;
     font-weight: 600;
-}
+} */
 
-.checkbox {
+/* .checkbox {
     margin-top: 8px;
     display: flex;
     align-items: center;
     gap: 6px;
-}
+} */
 
 .text-4 {
     color: mediumseagreen;

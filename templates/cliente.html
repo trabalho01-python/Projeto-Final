@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block conteudo %}
+
+<div class="container">
+        <div class="row">
+            {% for produto in produtos %}
+            {% set link_produto = url_for('produto_detalhe', produto_id=produto.id) %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100" onclick="window.location.href='{{ link_produto }}'">
+                    {% if produto.imagem %}
+                    <img src="{{ produto.imagem }}" class="card-img-top" alt="{{ produto.nome }}">
+                    {% else %}
+                    <img src="https://via.placeholder.com/300x200.png?text=Sem+Imagem" class="card-img-top" alt="Sem imagem">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ produto.nome }}</h5>
+                        <p class="card-text">{{ produto.descricao }}</p>
+                        <p class="card-text"><strong>Categoria:</strong> {{ produto.categoria }}</p>
+                        <p class="card-text"><strong>Preço:</strong> R$ {{ produto.preco }}</p>
+                        {% if produto.sem_validade %}
+                        <p class="card-text"><strong>Validade:</strong> Sem validade</p>
+                        {% else %}
+                        <p class="card-text"><strong>Validade:</strong> {{ produto.data_validade }}</p>
+                        {% endif %}
+                        <p class="card-text"><strong>Estoque:</strong> {{ produto.estoque }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+
+
+{% endblock %}

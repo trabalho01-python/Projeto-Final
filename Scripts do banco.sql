@@ -19,9 +19,10 @@ nome VARCHAR(250) NOT NULL,
 descricao TEXT NOT NULL,
 categoria ENUM('alimentos','bebidas','higiene','limpeza','hortifruti','padaria') NOT NULL,
 preco DECIMAL(10,2) NOT NULL,
-data_validade DATE NOT NULL,
+data_validade DATE,
+sem_validade BOOLEAN DEFAULT 0,
 estoque INT DEFAULT 0,
-url VARCHAR(1000) 
+imagem VARCHAR(1000) 
 );
 
 create table comentarios (

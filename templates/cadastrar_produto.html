@@ -16,7 +16,7 @@
     {% endif %}
     {% endwith %}
 
-    <form method="post" action="{{url_for('cadastrar_produto')}}" class="formulario-2">
+    <form id="produtoForm" method="post" action="{{url_for('cadastrar_produto')}}" class="formulario-2">
         <div class="row mb-3">
             <div class="col-md-6">
                 <label for="nome" class="form-label title-color2">Nome:</label>
@@ -24,14 +24,14 @@
             </div>
 
             <div class="col-md-6">
-                <label for="descricao" class="form-label title-color2">Descricao:</label>
+                <label for="descricao" class="form-label title-color2">Descrição:</label>
                 <input type="text" class="form-control color-border1" id="descricao" name="descricao" required>
             </div>
 
             <div class="col-md-6">
-                <label for="categoria" class="form-label title-color2">Categoria</label>
+                <label for="categoria" class="form-label title-color2">Categoria:</label>
                 <select class="form-select color-border1" id="categoria" name="categoria" required>
-                    <option value="">Selecione</option>
+                    <option value="">Selecione...</option>
                     <option value="alimentos">Alimentos</option>
                     <option value="bebidas">Bebidas</option>
                     <option value="higiene">Higiene</option>
@@ -42,48 +42,76 @@
             </div>
 
             <div class="col-md-6">
-                <div class="mb-3 campo">
-                    <label for="preco" class="form-label title-color2">Preço</label>
+                <div class="mb-3">
+                    <label for="preco" class="form-label title-color2">Preço:</label>
                     <div class="input-preco">
                         <span class="prefixo">R$</span>
-                        <input class="color-border1" type="text" id="preco" name="preco" required>
+                        <input class="form-control color-border1" type="text" id="preco" name="preco" required>
                     </div>
                 </div>
             </div>
 
             <div class="col-md-6">
-                <div class="campo">
-                    <label for="validade" class="title-color2">Data de Validade</label>
-                    <input class="color-border1" type="date" id="validade">
+                <div class="mb-3">
+                    <label for="validade" class="form-label title-color2">Data de Validade:</label>
+                    <input type="date" class="form-control color-border1" id="validade" name="validade">
                     <div class="checkbox">
-                        <input type="checkbox" id="sem_validade">
+                        <input type="checkbox" id="sem_validade" name="sem_validade">
                         <label for="sem_validade">Sem validade</label>
                     </div>
                 </div>
             </div>
 
             <div class="col-md-6">
-                <div class="mb-3 campo linha-checkbox">
-                    <label for="estoque" class="form-label title-color2">Estoque</label>
-                    <input type="number" class="form-control" id="estoque" name="estoque" required>
+                <div class="mb-3">
+                    <label for="estoque" class="form-label title-color2">Estoque:</label>
+                    <input type="number" class="form-control color-border1" id="estoque" name="estoque" required>
                 </div>
             </div>
 
             <div class="col-md-6">
-                <div class="mb-3 campo">
-                    <label for="imagem" class="form-label title-color2">Foto do Produto</label>
-                    <input type="text" class="form-control" id="imagem" name="imagem" accept="image/*" required>
+                <div class="mb-3">
+                    <label for="imagem" class="form-label title-color2">Foto do Produto:</label>
+                    <input type="text" class="form-control color-border1" id="imagem" name="imagem"
+                        required placeholder="Inserir a url da imagem aqui">
                 </div>
             </div>
 
-            <div class="col-md-6">
-                <div class="botao">
-                    <button type="submit" class="btn btn-primary">Cadastrar</button>
-                </div>
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-primary px-4 button-2">Cadastrar Produto</button>
             </div>
+
         </div>
     </form>
 </div>
+
+<!-- MODAL DE REVISÃO -->
+<div class="modal fade" id="revisaoModal" tabindex="-1" aria-labelledby="revisaoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Revisar Produto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+
+            <div class="modal-body">
+                <p><strong>Nome:</strong> <span id="revNome"></span></p>
+                <p><strong>Descrição:</strong> <span id="revDescricao"></span></p>
+                <p><strong>Categoria:</strong> <span id="revCategoria"></span></p>
+                <p><strong>Preço:</strong> R$ <span id="revPreco"></span></p>
+                <p><strong>Data de Validade:</strong> <span id="revDataValidade"></span></p>
+                <p><strong>Estoque:</strong> <span id="revEstoque"></span></p>
+                <p><strong>Foto do Produto:</strong> <img id="revFotoProduto" style="max-width: 150px;"></p>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" id="confirmarBtn">Cadastrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <script>
     document.getElementById('preco').addEventListener('input', function (e) {
@@ -113,6 +141,43 @@
             validadeInput.disabled = false;
         }
     });
+</script>
+
+<!-- modal para revisar -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("produtoForm");
+    const modal = new bootstrap.Modal(document.getElementById("revisaoModal"));
+    const confirmarBtn = document.getElementById("confirmarBtn");
+
+    // Intercepta o envio do formulário
+    form.addEventListener("submit", function (event) {
+        event.preventDefault(); // impede o envio automático
+
+        if (!form.checkValidity()) {
+            form.reportValidity(); // mostra mensagens padrão do navegador
+            return; // não abre o modal se estiver incompleto
+        }
+
+        // Preenche os dados no modal
+        document.getElementById("revNome").textContent = document.getElementById("nome").value;
+        document.getElementById("revDescricao").textContent = document.getElementById("descricao").value;
+        document.getElementById("revCategoria").textContent = document.getElementById("categoria").value;
+        document.getElementById("revPreco").textContent = document.getElementById("preco").value;
+        document.getElementById("revDataValidade").textContent = document.getElementById("validade").value;
+        document.getElementById("revEstoque").textContent = document.getElementById("estoque").value;
+        document.getElementById("revFotoProduto").src = document.getElementById("imagem").value;
+
+        // Abre o modal
+        modal.show();
+    });
+
+    // Se o usuário concordar, envia o formulário de verdade
+    confirmarBtn.addEventListener("click", function () {
+        modal.hide();
+        form.submit();
+    });
+});
 </script>
 
 {% endblock %}

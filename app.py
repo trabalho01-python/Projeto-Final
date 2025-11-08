@@ -5,7 +5,7 @@ import bcrypt
 def conectar_banco():
     config = { 
     'user': 'root', 
-    'password': '1234', 
+    'password': 'x7z1wp00', 
     'host': 'localhost', 
     'database': 'SuperSelect_sa', 
     }
@@ -22,30 +22,39 @@ def index():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
+
     if request.method == 'POST':
         email = request.form['email']
-        senha = request.form['senha'].encode('utf-8')
+        senha = request.form['senha'].encode('utf-8')  # senha digitada
 
         conexao = conectar_banco()
         cursor = conexao.cursor(dictionary=True)
         cursor.execute("SELECT * FROM usuarios WHERE email = %s", (email,))
         usuario = cursor.fetchone()
-        session['usuario'] = usuario
         cursor.close()
         conexao.close()
 
         if usuario:
+            # Confere se a senha digitada bate com a senha hash do banco
             if bcrypt.checkpw(senha, usuario['senha'].encode('utf-8')):
+                # Armazena apenas informações seguras na sessão
+                session['usuario_id'] = usuario['id']
+                session['usuario_email'] = usuario['email']
+                session['usuario_tipo'] = usuario['tipo']
+                print("Sessão após login:", dict(session))
+
+                # Redireciona conforme o tipo de usuário
                 if usuario['tipo'] == 'administrador':
                     return redirect('/administrador')
                 else:
-                    return redirect('/usuario')
+                    return redirect('/cliente')
             else:
                 error = "Senha incorreta."
         else:
             error = "E-mail não encontrado."
 
     return render_template('login.html', error=error)
+
 
 @app.route('/cadastro', methods = ['GET','POST'])
 def cadastro():
@@ -85,25 +94,36 @@ def cadastro():
     return render_template('/cadastro.html', tipo=tipo)
 
 
-@app.route('/usuario')
-def usuario():
-    usuario = session.get('usuario')
-    if not usuario:
-        return redirect('/login')
-    if usuario['tipo'] != 'usuario':
+@app.route('/cliente')
+def cliente():
+    print("Sessão atual:", dict(session))  # debug
+    usuario_id = session.get('usuario_id')
+    usuario_tipo = session.get('usuario_tipo')
+    usuario_email = session.get('usuario_email')
+
+    if not usuario_id or usuario_tipo != 'cliente':
+        print("Redirecionando para login")  # debug
         return redirect('/login')
     
-    return render_template('usuario.html')
+    conexao = conectar_banco()
+    cursor = conexao.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM produtos") 
+    produtos = cursor.fetchall()
+    cursor.close()
+    conexao.close()
+
+    return render_template('cliente.html', email=usuario_email, produtos=produtos)
 
 @app.route('/administrador')
 def administrador():
-    # usuario = session.get('usuario')
-    # if not usuario:
-    #     return redirect('/login')
-    # if usuario['tipo'] != 'administrador':
-    #     return redirect('/login')
+    usuario_id = session.get('usuario_id')
+    usuario_tipo = session.get('usuario_tipo')
+    usuario_email = session.get('usuario_email')
 
-    return render_template('administrador.html')
+    if not usuario_id or usuario_tipo != 'administrador':
+        return redirect('/login')
+
+    return render_template('administrador.html', email=usuario_email)
 
 @app.route('/cadastrar_produto', methods=['GET', 'POST'])
 def cadastrar_produto():
@@ -112,11 +132,10 @@ def cadastrar_produto():
         descricao = request.form['descricao']
         categoria = request.form['categoria']
         preco = request.form['preco'].replace('.', '').replace(',', '.')
-        data_validade = request.form['data_validade']
         estoque = request.form['estoque']
         sem_validade = 'sem_validade' in request.form
-        data_validade = None if sem_validade else request.form['data_validade']
-        imagem = request.files['imagem']
+        data_validade = None if sem_validade else request.form['validade']
+        imagem = request.form['imagem']
 
         conexao = conectar_banco()
         cursor = conexao.cursor()
@@ -142,27 +161,27 @@ def consultar_produto():
     conexao = conectar_banco()
     cursor = conexao.cursor(dictionary=True)
 
-    cursor.execute("""
-        SELECT * FROM produtos
-        ORDER BY id DESC
-    """)
+    cursor.execute("SELECT * FROM produtos ORDER BY id DESC")
     produtos = cursor.fetchall()
     cursor.close()
     conexao.close()
     return render_template('consultar_produto.html', produtos=produtos)
 
 
-@app.route('/excluir-produto/<int:id>')
+@app.route('/excluir_produto/<int:id>', methods=['POST'])
 def excluir_produto(id):
     conexao = conectar_banco()
     cursor = conexao.cursor()
-
-    cursor.execute("DELETE FROM produtos WHERE id = %s", (id,))
+    
+    cursor.execute("DELETE FROM produtos WHERE id=%s", (id,))
     conexao.commit()
-    flash('Produto excluído com sucesso!', 'success')
-    return redirect('consultar_produto')
+    cursor.close()
+    conexao.close()
+    flash("Produto excluído com sucesso!", "success")
+    return redirect('/consultar_produto')
 
-@app.route('/editar-produto/<int:id>', methods=['GET', 'POST'])
+
+@app.route('/editar_produto/<int:id>', methods=['GET', 'POST'])
 def editar_produto(id):
     conexao = conectar_banco()
     cursor = conexao.cursor(dictionary=True)
@@ -172,21 +191,54 @@ def editar_produto(id):
         descricao = request.form['descricao']
         categoria = request.form['categoria']
         preco = request.form['preco'].replace('.', '').replace(',', '.')
-        estoque = request.form['estoque']
         sem_validade = 'sem_validade' in request.form
-        data_validade = None if sem_validade else request.form['data_validade']
+        data_validade = None if sem_validade else request.form['validade']
+        estoque = request.form['estoque']
+        imagem = request.form['imagem']
 
-        cursor.execute("""
-            UPDATE produtos SET nome=%s, descricao=%s, categoria=%s, preco=%s, data_validade=%s, estoque=%s
-            WHERE id=%s
-        """, (nome, descricao, categoria, preco, data_validade, estoque, id))
-        conexao.commit()
-        flash('Produto atualizado com sucesso!', 'success')
-        return redirect('consultar_produto')
+        try:
+            sql = """
+                UPDATE produtos 
+                SET nome=%s, descricao=%s, categoria=%s, preco=%s, data_validade=%s, estoque=%s, sem_validade=%s, imagem=%s
+                WHERE id=%s
+            """
+            valores = (nome, descricao, categoria, preco, data_validade, estoque, sem_validade, imagem, id)
+            cursor.execute(sql, valores)
+            conexao.commit()
+            flash('Produto atualizado com sucesso!', 'success')
 
-    cursor.execute("SELECT * FROM produtos WHERE id = %s", (id,))
+            # <-- Aqui vem o redirecionamento
+            return redirect('/consultar_produto')
+
+        except Exception as e:
+            conexao.rollback()
+            flash(f'Erro ao atualizar produto: {e}', 'danger')
+
+    # Se for GET, traz os dados para preencher o formulário
+    cursor.execute("SELECT * FROM produtos WHERE id=%s", (id,))
     produto = cursor.fetchone()
+    cursor.close()
+    conexao.close()
     return render_template('editar_produto.html', produto=produto)
+
+
+@app.route('/produto_detalhe/<int:produto_id>')
+def produto_detalhe(produto_id):
+    conexao = conectar_banco()
+    cursor = conexao.cursor(dictionary=True)
+
+    cursor.execute("SELECT * FROM produtos WHERE id = %s", (produto_id,))
+    produto = cursor.fetchone()
+
+    cursor.close()
+    conexao.close()
+
+    # Se o produto existir, renderiza o template
+    if produto:
+        return render_template('produto_detalhe.html', produto=produto)
+    else:
+        return "Produto não encontrado"
+
 
 
 if __name__ == "__main__":
