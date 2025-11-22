@@ -2,24 +2,6 @@
 
 {% block conteudo %}
 
-<!-- Navbar -->
-<!-- <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="#">Admin</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('cadastrar_produto') }}">Cadastrar Produto</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav> -->
-
-
 <nav class="navbar navbar-expand-lg navbar-dark py-2 navbar-2">
     <div class="container-fluid d-flex justify-content-between align-items-center">
         <!-- Logo ou título -->
@@ -34,12 +16,12 @@
 </nav>
 
 
-<div class="container">
+<div class="container produtos-container">
     <div class="row">
         {% for produto in produtos %}
         {% set link_produto = url_for('produto_detalhe', produto_id=produto.id) %}
         <div class="col-md-4 mb-4">
-            <div class="card h-100" onclick="window.location.href='{{ link_produto }}'">
+            <div class="card custom-card" onclick="window.location.href='{{ link_produto }}'">
                 {% if produto.imagem %}
                 <img src="{{ produto.imagem }}" class="card-img-top" alt="{{ produto.nome }}">
                 {% else %}

@@ -2,61 +2,68 @@
 
 {% block conteudo %}
 
-<div class="container">
-    <h2 class="mb-4">Editar Produto</h2>
+<div class="container mt-5">
+    <h2 class="mb-4 text-4">Editar Produto</h2>
 
     <form id="editarProdutoForm" method="post" action="{{ url_for('editar_produto', id=produto['id']) }}"
         class="needs-validation" novalidate>
         <div class="row">
             <div class="col-md-6 mb-3">
-                <label for="nome" class="form-label">Nome:</label>
-                <input type="text" class="form-control" id="nome" name="nome" value="{{ produto['nome'] }}" required>
+                <label for="nome" class="form-label title-color2">Nome:</label>
+                <input type="text" class="form-control color-border1" id="nome" name="nome"
+                    value="{{ produto['nome'] }}" required>
             </div>
 
             <div class="col-md-6 mb-3">
-                <label for="categoria" class="form-label">Categoria:</label>
-                <input type="text" class="form-control" id="categoria" name="categoria"
+                <label for="categoria" class="form-label title-color2">Categoria:</label>
+                <input type="text" class="form-control color-border1" id="categoria" name="categoria"
                     value="{{ produto['categoria'] }}" required>
             </div>
 
             <div class="col-md-12 mb-3">
-                <label for="descricao" class="form-label">Descrição:</label>
-                <textarea class="form-control" id="descricao" name="descricao" rows="3"
+                <label for="descricao" class="form-label title-color2">Descrição:</label>
+                <textarea class="form-control color-border1" id="descricao" name="descricao" rows="3"
                     required>{{ produto['descricao'] }}</textarea>
             </div>
 
             <div class="col-md-4 mb-3">
-                <label for="preco" class="form-label">Preço:</label>
-                <input type="text" class="form-control" id="preco" name="preco" value="{{ produto['preco'] }}" required>
+                <label for="preco" class="form-label title-color2">Preço:</label>
+                <input type="text" class="form-control color-border1" id="preco" name="preco"
+                    value="{{ produto['preco'] }}" required>
             </div>
 
             <div class="col-md-4 mb-3">
-                <label for="validade" class="form-label">Data de Validade:</label>
-                <input type="date" class="form-control" id="validade" name="validade"
+                <label for="validade" class="form-label title-color2">Data de Validade:</label>
+                <input type="date" class="form-control color-border1" id="validade" name="validade"
                     value="{{ produto['data_validade'] if not produto['sem_validade'] }}">
                 <div class="form-check mt-2">
-                    <input type="checkbox" class="form-check-input" id="sem_validade" name="sem_validade" {% if
-                        produto['sem_validade'] %}checked{% endif %}>
+                    <input type="checkbox" class="form-check-input color-border1" id="sem_validade" name="sem_validade"
+                        {% if produto['sem_validade'] %}checked{% endif %}>
                     <label for="sem_validade" class="form-check-label">Sem validade</label>
                 </div>
             </div>
 
             <div class="col-md-4 mb-3">
-                <label for="estoque" class="form-label">Estoque:</label>
-                <input type="number" class="form-control" id="estoque" name="estoque" value="produto['estoque']"
-                    required>
+                <label for="estoque" class="form-label title-color2">Estoque:</label>
+                <input type="number" class="form-control color-border1" id="estoque" name="estoque"
+                    value="produto['estoque']" required>
             </div>
 
             <div class="col-md-6 mb-3">
-                <label for="imagem" class="form-label">Foto do Produto (URL):</label>
-                <input type="text" class="form-control" id="imagem" name="imagem" value="{{ produto['imagem'] }}">
+                <label for="imagem" class="form-label title-color2">Foto do Produto (URL):</label>
+                <input type="text" class="form-control color-border1" id="imagem" name="imagem"
+                    value="{{ produto['imagem'] }}">
             </div>
         </div>
 
-        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#revisaoModal">
-            Salvar Alterações
-        </button>
-        <a href="{{ url_for('consultar_produto') }}" class="btn btn-secondary">Cancelar</a>
+        <div class="text-center my-5">
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#revisaoModal">
+                Salvar Alterações
+            </button>
+            <a href="{{ url_for('consultar_produto') }}" class="btn btn-secondary">Cancelar</a>
+        </div>
+
+
 
     </form>
 
@@ -89,6 +96,7 @@
 
 </div>
 
+
 <script>
     //Bloqueia o envio do formulário até que tudo esteja correto(verifica se todos os campos obrigatórios estão preenchidos.)
     (function () {
@@ -105,6 +113,7 @@
         })
     })()
 </script>
+
 
 <script>
     document.getElementById('preco').addEventListener('input', function (e) {
@@ -124,27 +133,28 @@
     });
 </script>
 
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    const modal = document.getElementById('revisaoModal');
-    const confirmarBtn = document.getElementById('confirmarSalvar');
-    
-    // Quando a modal abre, preenche os campos
-    modal.addEventListener('show.bs.modal', function () {
-        document.getElementById('revNome').textContent = document.getElementById('nome').value;
-        document.getElementById('revCategoria').textContent = document.getElementById('categoria').value;
-        document.getElementById('revDescricao').textContent = document.getElementById('descricao').value;
-        document.getElementById('revPreco').textContent = document.getElementById('preco').value;
-        document.getElementById('revValidade').textContent = document.getElementById('validade').value || 'Sem validade';
-        document.getElementById('revEstoque').textContent = document.getElementById('estoque').value;
-        document.getElementById('revImagem').textContent = document.getElementById('imagem').value;
-    });
 
-    // Botão confirmar envia o formulário
-    confirmarBtn.addEventListener('click', function() {
-        document.getElementById('editarProdutoForm').submit();
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const modal = document.getElementById('revisaoModal');
+        const confirmarBtn = document.getElementById('confirmarSalvar');
+
+        // Quando a modal abre, preenche os campos
+        modal.addEventListener('show.bs.modal', function () {
+            document.getElementById('revNome').textContent = document.getElementById('nome').value;
+            document.getElementById('revCategoria').textContent = document.getElementById('categoria').value;
+            document.getElementById('revDescricao').textContent = document.getElementById('descricao').value;
+            document.getElementById('revPreco').textContent = document.getElementById('preco').value;
+            document.getElementById('revValidade').textContent = document.getElementById('validade').value || 'Sem validade';
+            document.getElementById('revEstoque').textContent = document.getElementById('estoque').value;
+            document.getElementById('revImagem').textContent = document.getElementById('imagem').value;
+        });
+
+        // Botão confirmar envia o formulário
+        confirmarBtn.addEventListener('click', function () {
+            document.getElementById('editarProdutoForm').submit();
+        });
     });
-});
 </script>
 
 

@@ -6,13 +6,194 @@
     <div class="container-fluid d-flex justify-content-between align-items-center">
         <!-- Logo ou título -->
         <a class="navbar-brand" href="#">Gestão de Produtos</a>
-
-        <!-- Links à direita -->
-        <div class="d-flex align-items-center">
-            <a class="nav-link text-white me-5" href="{{ url_for('cadastrar_produto') }}">Cadastrar Produtos</a>
-            <a class="nav-link text-white" href="{{ url_for('consultar_produto') }}">Consultar Produtos</a>
-        </div>
     </div>
 </nav>
+
+<div class="container produtos-container">
+    <div class="row mb-4">
+        <div class="col-md-6 mb-4">
+            <div class="card card-1" onclick="location.href='/cadastrar_produto'">
+                <div class="card-body text-center">
+                    <div class="icone-2 mb-3">
+                        <i class="bi bi-cart-plus-fill"></i>
+                    </div>
+                    <h5>Cadastrar Produto</h5>
+                    <p>Adicione novos produtos ao catálogo.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card card-2" onclick="location.href='/consultar_produto'">
+                <div class="card-body text-center">
+                    <div class="icone-3 mb-3">
+                        <i class="bi bi-search"></i>
+                    </div>
+                    <h5>Consultar Produto</h5>
+                    <p>Consulte detalhes e disponibilidade de produtos no sistema.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card card-3" data-bs-toggle="modal" data-bs-target="#modalEditarProduto">
+                <div class="card-body text-center">
+                    <div class="icone-4 mb-3">
+                        <i class="bi bi-pencil-fill"></i>
+                    </div>
+                    <h5>Editar Produto</h5>
+                    <p>Gerencie alterações de preço, estoque e detalhes do produto.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card card-4" data-bs-toggle="modal" data-bs-target="#modalComentariosInternos">
+                <div class="card-body text-center">
+                    <div class="icone-5 mb-3">
+                        <i class="bi bi-chat-dots-fill"></i>
+                    </div>
+                    <h5>Comentários Internos</h5>
+                    <p>Comunicação interna entre administradores para alinhamento e registro.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Modal de comentários -->
+<div class="modal fade" id="modalComentariosInternos" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">Comentários Internos</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+
+      <div class="modal-body text-center">
+
+        <!-- Botão -> Abrir modal de adicionar comentário -->
+        <button class="btn btn-primary w-100 mb-3"
+                data-bs-toggle="modal"
+                data-bs-target="#modalAdicionarComentario"
+                data-bs-dismiss="modal">
+          Adicionar Comentário
+        </button>
+
+        <!-- Botão -> Redirecionar para página filtrada -->
+         {% set link_produtos_comentados = url_for('consultar_produto', filtro='comentados') %}
+        <button class="btn btn-secondary w-100"
+                onclick="window.location.href='{{ link_produtos_comentados }}'">
+          Ver Produtos com Comentários
+        </button>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- AQUI FICA A MODAL SECUNDÁRIA (ADICIONAR COMENTÁRIO) -->
+<div class="modal fade" id="modalAdicionarComentario" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">Adicionar Comentário</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Conteúdo futuro -->
+        <p>Aqui você vai colocar os campos depois.</p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Modal EDITAR PRODUTO -->
+<div class="modal fade" id="modalEditarProduto" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <form id="formBuscarProduto">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Produto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <label>Digite o ID ou o nome do produto:</label>
+                    <input type="text" name="termo" class="form-control" required>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Buscar</button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal de Erro -->
+<div class="modal fade" id="modalErroProduto" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">Erro</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                O produto com o ID informado não foi encontrado.
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script>
+    document.getElementById("formBuscarProduto").addEventListener("submit", function (e) {
+        e.preventDefault();
+        const termo = this.termo.value;
+
+        fetch("/buscar_edicao", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ termo: termo })
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.erro) {
+                    // Fecha a primeira modal
+                    var modalEditar = bootstrap.Modal.getInstance(document.getElementById("modalEditarProduto"));
+                    if (modalEditar) modalEditar.hide();
+
+                    // Abre a modal de erro
+                    var modalErro = new bootstrap.Modal(document.getElementById("modalErroProduto"));
+                    modalErro.show();
+                } else {
+                    window.location.href = `/editar_produto/${data.id}`;
+                }
+            });
+    });
+</script>
+
+
 
 {% endblock %}

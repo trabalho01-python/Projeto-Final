@@ -25,18 +25,184 @@
           </p>
 
           {% if produto.sem_validade %}
-            <p class="card-text"><strong>Validade:</strong> Produto sem validade</p>
+          <p class="card-text"><strong>Validade:</strong> Produto sem validade</p>
           {% else %}
-            <p class="card-text">
-              <strong>Validade:</strong> 
-              {{ produto.data_validade.strftime('%d/%m/%Y') if produto.data_validade else 'Não informada' }}
-            </p>
+          <p class="card-text">
+            <strong>Validade:</strong>
+            {{ produto.data_validade.strftime('%d/%m/%Y') if produto.data_validade else 'Não informada' }}
+          </p>
           {% endif %}
 
         </div>
       </div>
     </div>
   </div>
+
+
+  <!-- SEÇÃO DE COMENTÁRIOS INTERNOS (ADMIN) -->
+  <div class="card mt-4">
+    <div class="card-body">
+      <h4 class="mb-3">Comentários</h4>
+
+
+      <div id="comentarios-produto-{{ produto.id }}">
+        <!-- Comentário principal -->
+        {% if comentarios %}
+          {% for c in comentarios %}
+          <div class="comentario mb-3" data-id="{{ c.id }}">
+            <div class="comentario-principal p-2">
+                <p class="text-5 mb-1">{{ c.comentario }}</p>
+                <small class="detalhes text-muted">
+                  Por <strong>{{ c.usuario_nome }}</strong> em {{ c.data_criacao }}
+                </small>
+                
+                    <button class="btn btn-sm btn-link btn-responder" data-id="{{ c.id }}">Responder</button>
+            </div>
+            
+            <div class="respostas mt-3 ms-4">
+              {% if c.respostas_list %}
+              {% for r in c.respostas_list %}
+              <div class="resposta" data-id="{{ r.id }}">
+                <p class="text-5 mb-1">{{ r.comentario }}</p>
+                <small class="text-muted detalhes">
+                  Por <strong>{{ r.usuario_nome }}</strong> em {{ r.data_criacao }}
+                </small>
+
+                <!-- Botão de responder respostas -->
+                <div>
+                  <button class="btn btn-sm btn-link btn-responder" data-id="{{ r.id }}">Responder</button>
+                </div>
+              </div>
+              {% endfor %}
+              {% endif %}
+            </div>
+          </div>
+            {% endfor %}
+
+        {% else %}
+          <p class="text-muted">Nenhum comentário ainda.</p>
+        {% endif %}
+      </div>
+
+      <hr>
+
+      <!-- Formulário para novos comentários de admins -->
+      <h5 class="mb-2">Adicionar comentário</h5>
+      <form id="form-comentario" data-produto="{{ produto.id }}">
+        <textarea name="comentario" class="form-control mb-2" rows="3" placeholder="Escreva um comentário..."
+          required></textarea>
+          <input type="hidden" name="parent_id" value="">
+        <button type="submit" class="btn btn-primary">Enviar</button>
+      </form>
+
+    </div>
+  </div>
+
 </div>
+
+
+<script>
+document.getElementById("form-comentario").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const form = e.target;
+    const produto_id = form.dataset.produto;
+    const comentario = form.querySelector("textarea[name='comentario']").value.trim();
+    const parent_id = form.querySelector("input[name='parent_id']").value || null;
+
+    if (!comentario) return;
+
+    try {
+        const response = await fetch("/comentario_admin", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ produto_id, comentario, parent_id })
+        });
+
+        const data = await response.json();
+
+        if (data.erro) {
+            alert(data.erro);
+            return;
+        }
+
+        // Criar div do novo comentário/resposta
+        const novo = document.createElement("div");
+        novo.className = parent_id ? "resposta rounded p-2 mb-2" : "comentario mb-3";
+        novo.innerHTML = `
+            <div class="${parent_id ? '' : 'comentario-principal p-3 rounded'}">
+                <p class="text-5 mb-1">${data.comentario}</p>
+                <small class="text-muted detalhes">Por <strong>${data.nome}</strong> em ${data.data_criacao}</small>
+                <br>
+                <button class="btn-responder btn btn-link btn-sm" data-id="${data.id}">Responder</button>
+            </div>
+            ${parent_id ? '' : '<div class="respostas mt-2 ms-4"></div>'}
+        `;
+
+        if (!parent_id) {
+            // Comentário novo → prepend no container principal
+            const container = document.getElementById("comentarios-produto-" + produto_id);
+            container.prepend(novo);
+        } else {
+            // Resposta → inserir dentro do comentário correto
+            const comentarioPai = document.querySelector(`.comentario[data-id='${parent_id}']`);
+            let respostasDiv = comentarioPai.querySelector(".respostas");
+            if (!respostasDiv) {
+                respostasDiv = document.createElement("div");
+                respostasDiv.className = "respostas mt-2 ms-4";
+                comentarioPai.appendChild(respostasDiv);
+            }
+            respostasDiv.appendChild(novo);
+            // **Mover o form de volta para fora da div de respostas**
+            comentarioPai.appendChild(form);
+        }
+
+        // Limpar textarea
+        form.querySelector("textarea[name='comentario']").value = "";
+        form.querySelector("input[name='parent_id']").value = "";
+
+    } catch (err) {
+        console.error(err);
+        alert("Erro ao enviar comentário.");
+    }
+});
+
+
+document.addEventListener("click", function(e) {
+    if (e.target.classList.contains("btn-responder")) {
+
+        const comentarioId = e.target.dataset.id;
+        const form = document.getElementById("form-comentario");
+
+        // Define o parent_id
+        form.querySelector('input[name="parent_id"]').value = comentarioId;
+
+        // Muda o placeholder
+        form.querySelector('textarea[name="comentario"]').placeholder = "Responder comentário...";
+
+        // Encontra o comentário pai
+        const comentarioPai = e.target.closest(".comentario");
+
+        // Procura ou cria a div de respostas
+        let respostasDiv = comentarioPai.querySelector(".respostas");
+        if (!respostasDiv) {
+            respostasDiv = document.createElement("div");
+            respostasDiv.className = "respostas mt-2 ms-4";
+            comentarioPai.appendChild(respostasDiv);
+        }
+
+        // Move o formulário para o **final da div de respostas**
+        respostasDiv.appendChild(form);
+
+
+        form.querySelector('textarea[name="comentario"]').focus();
+    }
+});
+
+
+</script>
+
+
+
 
 {% endblock %}

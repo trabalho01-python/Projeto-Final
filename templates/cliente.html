@@ -5,7 +5,7 @@
 <div class="container">
         <div class="row">
             {% for produto in produtos %}
-            {% set link_produto = url_for('produto_detalhe', produto_id=produto.id) %}
+            {% set link_produto = url_for('produto_cliente', produto_id=produto.id) %}
             <div class="col-md-4 mb-4">
                 <div class="card h-100" onclick="window.location.href='{{ link_produto }}'">
                     {% if produto.imagem %}

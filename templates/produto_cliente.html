@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block conteudo %}
+
+
+<div class="container mt-5 mb-5">
+    <div class="card">
+        <div class="row g-0">
+            <!-- Imagem -->
+            <div class="col-md-5">
+                <img src="{{ produto.imagem }}" class="img-fluid rounded-start" alt="{{ produto.nome }}">
+            </div>
+
+            <!-- Informações -->
+            <div class="col-md-7">
+                <div class="card-body">
+                    <h2 class="card-title mb-3">{{ produto.nome }}</h2>
+                    <p class="card-text text-muted mb-2"><strong>Categoria:</strong> {{ produto.categoria }}</p>
+                    <p class="card-text mb-4">{{ produto.descricao }}</p>
+
+                    <h4 class="text-success mb-3">R$ {{ "%.2f"|format(produto.preco) }}</h4>
+
+                    <p class="card-text">
+                        <strong>Estoque:</strong> {{ produto.estoque }} unidade{{ 's' if produto.estoque != 1 else '' }}
+                    </p>
+
+                    {% if produto.sem_validade %}
+                    <p class="card-text"><strong>Validade:</strong> Produto sem validade</p>
+                    {% else %}
+                    <p class="card-text">
+                        <strong>Validade:</strong>
+                        {{ produto.data_validade.strftime('%d/%m/%Y') if produto.data_validade else 'Não informada' }}
+                    </p>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
+
+{% endblock %}
