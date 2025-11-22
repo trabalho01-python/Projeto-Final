@@ -44,7 +44,6 @@ def login():
                 session['usuario_id'] = usuario['id']
                 session['usuario_email'] = usuario['email']
                 session['usuario_tipo'] = usuario['tipo']
-                print("Sessão após login:", dict(session))
 
                 # Redireciona conforme o tipo de usuário
                 if usuario['tipo'] == 'administrador':
