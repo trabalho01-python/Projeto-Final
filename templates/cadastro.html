@@ -12,16 +12,6 @@
     <!-- formulario -->
     <div class="form-container">
         <div class="form-side">
-            {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-            {% for category, message in messages %}
-            <div class="alert alert-{{ category }} alert-dismissible fade show mt-2" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
-            </div>
-            {% endfor %}
-            {% endif %}
-            {% endwith %}
             <form method="post" action="{{url_for('cadastro')}}" class="formulario-2">
                 <div class="row mb-3">
                     <div class="col-md-6">
@@ -34,16 +24,15 @@
                     </div>
                     <div class="col-md-6">
                         <label for="senha" class="form-label title-color2">Senha:</label>
-                        <div class="position-relative">
+                        <div class="position-relative password-container">
                             <input type="password" class="form-control pe-5 color-border1" id="senha" name="senha"
                                 required>
-                            <i id="iconeOlho"
-                                class="fa fa-eye position-absolute top-50 end-0 translate-middle-y me-3"></i>
+                            <i id="toggleSenha" class="bi bi-eye-fill toggle-icon"></i>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <label for="cpf" class="form-label title-color2">CPF:</label>
-                        <input type="text" class="form-control color-border1" id="cpf" name="cpf">
+                        <input type="text" class="form-control color-border1" id="cpf" name="cpf" maxlength="14">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label" for="">
@@ -78,24 +67,38 @@
     </div>
 </div>
 
+
 <!-- ocultar senha -->
 <script>
-    function mostrarSenha() {
-        const campo = document.getElementById("senha");
-        const icone = document.getElementById("iconeOlho");
+    const input = document.getElementById("senha");
+    const toggle = document.getElementById("toggleSenha");
 
-        if (campo.type === "password") {
-            campo.type = "text";
-            icone.classList.remove("fa-eye");
-            icone.classList.add("fa-eye-slash");
-        }
-        else {
-            campo.type = "password";
-            icone.classList.remove("fa-eye-slash");
-            icone.classList.add("fa-eye")
-        }
+    function resetPasswordState() {
+        input.type = "password";
+        toggle.className = "bi bi-eye-fill toggle-icon";
     }
+
+    // Exibir/ocultar o olhinho conforme o usuário digita
+    input.addEventListener("input", () => {
+        if (input.value.length > 0) {
+            toggle.style.display = "block";
+        } else {
+            toggle.style.display = "none";
+            resetPasswordState(); // apenas uma chamada
+        }
+    });
+
+    // Alternar visibilidade da senha
+    toggle.addEventListener("click", () => {
+        const showing = input.type === "text";
+
+        input.type = showing ? "password" : "text";
+        toggle.className = showing
+            ? "bi bi-eye-fill toggle-icon"
+            : "bi bi-eye-slash-fill toggle-icon";
+    });
 </script>
+
 
 <!-- Campo CPF e endereço aparecem apenas se o tipo for admin  -->
 <script>
@@ -111,6 +114,31 @@
         }
     }
 </script>
+
+
+<!-- Formatar CPF -->
+<script>
+    const cpfInput = document.getElementById("cpf");
+
+    // Máscara dinâmica
+    cpfInput.addEventListener("input", () => {
+        let v = cpfInput.value.replace(/\D/g, ""); // remove tudo que não é número
+
+        // Aplica máscara de forma compacta
+        v = v.replace(/^(\d{3})(\d)/, "$1.$2");      // coloca ponto após 3 dígitos
+        v = v.replace(/^(\d{3})\.(\d{3})(\d)/, "$1.$2.$3"); // segundo ponto
+        v = v.replace(/^(\d{3})\.(\d{3})\.(\d{3})(\d{1,2})$/, "$1.$2.$3-$4"); // traço
+
+        cpfInput.value = v;
+    });
+
+    // Antes de enviar, envia apenas números
+    const form = cpfInput.closest("form");
+    form.addEventListener("submit", () => {
+        cpfInput.value = cpfInput.value.replace(/\D/g, "");
+    });
+</script>
+
 
 
 {% endblock %}

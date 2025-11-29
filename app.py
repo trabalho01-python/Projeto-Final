@@ -5,7 +5,7 @@ import bcrypt
 def conectar_banco():
     config = { 
     'user': 'root', 
-    'password': '1234', 
+    'password': 'x7z1wp00', 
     'host': 'localhost', 
     'database': 'SuperSelect_sa', 
     }

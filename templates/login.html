@@ -19,7 +19,10 @@
                 </div>
                 <div class="mb-3">
                     <label for="senha" class="form-label">Senha</label>
-                    <input type="password" class="form-control" name="senha" required>
+                    <div class="password-container">
+                        <input type="password" class="form-control" id="senha" name="senha" required>
+                        <i id="toggleSenha" class="bi bi-eye-fill toggle-icon"></i>
+                    </div>
                 </div>
                 <button type="submit" class="btn btn-primary w-100 button-1">Entrar</button>
                 <div class="text-center mt-3">
@@ -32,5 +35,37 @@
         </div>
     </div>
 </div>
+
+
+<!-- ocultar senha -->
+<script>
+    const input = document.getElementById("senha");
+    const toggle = document.getElementById("toggleSenha");
+
+    function resetPasswordState() {
+        input.type = "password";
+        toggle.className = "bi bi-eye-fill toggle-icon";
+    }
+
+    // Exibir/ocultar o olhinho conforme o usuário digita
+    input.addEventListener("input", () => {
+        if (input.value.length > 0) {
+            toggle.style.display = "block";
+        } else {
+            toggle.style.display = "none";
+            resetPasswordState(); // apenas uma chamada
+        }
+    });
+
+    // Alternar visibilidade da senha
+    toggle.addEventListener("click", () => {
+        const showing = input.type === "text";
+
+        input.type = showing ? "password" : "text";
+        toggle.className = showing
+            ? "bi bi-eye-fill toggle-icon"
+            : "bi bi-eye-slash-fill toggle-icon";
+    });
+</script>
 
 {% endblock %}

@@ -298,3 +298,28 @@
 .resposta .btn-responder {
     margin-top: 2px;
 }
+
+/* Container do campo de senha */
+.password-container {
+    position: relative; /* necessário para posicionar o ícone */
+}
+
+/* Campo de input */
+.password-container input {
+    width: 100%;
+    padding-right: 40px; /* espaço para o ícone à direita */
+    box-sizing: border-box;
+}
+
+/* Ícone do olho */
+.password-container .toggle-icon {
+    position: absolute;
+    right: 10px; /* colado no cantinho direito */
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 1.2rem; /* tamanho do ícone */
+    color: royalblue; 
+    user-select: none; /* evita seleção do ícone ao clicar */
+    display: none;
+}

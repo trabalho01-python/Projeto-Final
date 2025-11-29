@@ -46,7 +46,7 @@
             <div class="col-md-4 mb-3">
                 <label for="estoque" class="form-label title-color2">Estoque:</label>
                 <input type="number" class="form-control color-border1" id="estoque" name="estoque"
-                    value="produto['estoque']" required>
+                    value="{{ produto['estoque'] }}" required>
             </div>
 
             <div class="col-md-6 mb-3">
@@ -62,8 +62,6 @@
             </button>
             <a href="{{ url_for('consultar_produto') }}" class="btn btn-secondary">Cancelar</a>
         </div>
-
-
 
     </form>
 
@@ -93,7 +91,6 @@
             </div>
         </div>
     </div>
-
 </div>
 
 
