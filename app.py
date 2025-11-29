@@ -4,7 +4,7 @@ import bcrypt
 
 host = "teste001.mysql.pythonanywhere-services.com" 
 user = "teste001" 
-password = "L0rt5q60"
+password = "12345678Dio#"
 database = "teste001$SuperSelect_sa"
 
 
@@ -13,7 +13,7 @@ def conectar_banco():
     'user': user, 
     'password': password, 
     'host': host, 
-    'database': 'SuperSelect_sa', 
+    'database': database, 
     }
     conexao = my.connect(**config)
     return conexao
