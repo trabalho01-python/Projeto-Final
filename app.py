@@ -2,11 +2,17 @@ from flask import Flask, render_template, request, redirect, flash, session, jso
 import mysql.connector as my
 import bcrypt
 
+host = "teste001.mysql.pythonanywhere-services.com" #
+user = "teste001" 
+password = "L0rt5q60"
+database = "SuperSelect_sa"
+
+
 def conectar_banco():
     config = { 
-    'user': 'root', 
-    'password': 'x7z1wp00', 
-    'host': 'localhost', 
+    'user': user, 
+    'password': password, 
+    'host': host, 
     'database': 'SuperSelect_sa', 
     }
     conexao = my.connect(**config)
